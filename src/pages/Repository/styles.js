@@ -106,13 +106,28 @@ export const IssueButton = styled.div.attrs((props) => ({}))`
 
   button {
     margin: 0px 10px 30px;
-    border: 2px solid transparent
+    border: 2px solid transparent;
     border-radius: 3px;
     padding: 10px;
 
     &:nth-child(${(props) => props.active + 1}) {
       background: #576574;
       color: white;
+    }
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    padding: 10px;
+    margin: 15px;
+
+    &:disabled {
+      opacity: 0.9;
+      cursor: not-allowed;
     }
   }
 `;

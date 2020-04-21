@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import api from '../../services/api';
-import { Loading, Owner, IssueList, IssueButton } from './styles';
+import {
+  Loading,
+  Owner,
+  IssueList,
+  IssueButton,
+  ButtonContainer,
+} from './styles';
 import Container from '../../components/Container';
 
 export default class Repository extends Component {
@@ -24,6 +30,7 @@ export default class Repository extends Component {
       { state: 'closed', label: 'Fechados', active: false },
     ],
     filterIndex: 0,
+    page: 1,
   };
 
   async componentDidMount() {
@@ -53,8 +60,14 @@ export default class Repository extends Component {
     this.loadIssues();
   };
 
+  handlePage = async (action) => {
+    const { page } = this.state;
+    await this.setState({ page: action === 'next' ? page + 1 : page - 1 });
+    this.loadIssues();
+  };
+
   loadIssues = async () => {
-    const { filters, filterIndex } = this.state;
+    const { filters, filterIndex, page } = this.state;
     const { match } = this.props;
 
     const repoName = decodeURIComponent(match.params.repository);
@@ -63,6 +76,7 @@ export default class Repository extends Component {
       params: {
         state: filters[filterIndex].state,
         per_page: 5,
+        page,
       },
     });
 
@@ -70,7 +84,14 @@ export default class Repository extends Component {
   };
 
   render() {
-    const { repository, issues, loading, filters, filterIndex } = this.state;
+    const {
+      repository,
+      issues,
+      loading,
+      filters,
+      filterIndex,
+      page,
+    } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -113,6 +134,18 @@ export default class Repository extends Component {
             </li>
           ))}
         </IssueList>
+        <ButtonContainer>
+          <button
+            type="button"
+            disabled={page < 2}
+            onClick={() => this.handlePage('back')}
+          >
+            back
+          </button>
+          <button type="button" onClick={() => this.handlePage('next')}>
+            next
+          </button>
+        </ButtonContainer>
       </Container>
     );
   }
